@@ -24,11 +24,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-/*void MainWindow::paintEvent(QPaintEvent* event)
-{
-    //QPainter painter(this);
-}*/
-
 void MainWindow::loadSettings(const QString& path)
 {
     QFile f(path);
@@ -107,6 +102,10 @@ void MainWindow::generateQuestion()
     ui->questionLabel->setText(questionText.arg(goodIterator.value()));
 
     timer.setInterval(timeToChoose);
+}
+
+void MainWindow::generateNextPair()
+{
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent *event)

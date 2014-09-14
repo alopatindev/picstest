@@ -33,8 +33,10 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+public slots:
+    void generateNextPair();
+
 protected:
-    //void paintEvent(QPaintEvent* event);
     void closeEvent(QCloseEvent* event);
     void keyReleaseEvent(QKeyEvent *event);
 

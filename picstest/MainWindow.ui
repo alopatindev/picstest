@@ -16,10 +16,10 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="1" column="0">
-     <widget class="QWidget" name="leftImage" native="true"/>
+     <widget class="PictureWidget" name="leftImage" native="true"/>
     </item>
     <item row="1" column="1">
-     <widget class="QWidget" name="rightImage" native="true"/>
+     <widget class="PictureWidget" name="rightImage" native="true"/>
     </item>
     <item row="0" column="0" colspan="2">
      <widget class="QLabel" name="questionLabel">
@@ -54,6 +54,14 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>PictureWidget</class>
+   <extends>QWidget</extends>
+   <header>PictureWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
