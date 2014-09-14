@@ -6,6 +6,7 @@
 #include <QMap>
 #include <QSet>
 #include <QTimer>
+#include <cstdint>
 
 namespace Ui {
 class MainWindow;
@@ -38,7 +39,8 @@ class MainWindow : public QMainWindow
     int question;
     bool leftIsGood;
     int goodAnswers;
-    int avgAnswerSpeed;
+    uint64_t lastTime;
+    int answersTime;
 
 public:
     explicit MainWindow(QWidget *parent = 0);

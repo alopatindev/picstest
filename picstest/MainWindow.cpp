@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QtXml>
 #include <QMessageBox>
+#include <ctime>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -14,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     leftIsGood(false),
     state(None),
     goodAnswers(0),
-    avgAnswerSpeed(0)
+    answersTime(0)
 {
     ui->setupUi(this);
 
@@ -88,7 +89,8 @@ void MainWindow::loadSettings(const QString& path)
 
 void MainWindow::generateQuestion()
 {
-    qsrand(QTime::currentTime().msec());
+    //qsrand(QTime::currentTime().msec());
+    qsrand(uint(std::time(NULL)));
 
     int goodRand = qrand() % imageTypes.size();
     TypesMap::iterator goodIterator = imageTypes.begin();
@@ -111,6 +113,7 @@ void MainWindow::generateQuestion()
     listFiles(resourcesDir + badIterator.key(), badFiles);
 
     timer.setInterval(timeToChoose);
+    connect(&timer, SIGNAL(timeout()), SLOT(generateNextPair()));
 }
 
 void MainWindow::listFiles(const QString& directory, QStringList& files)
@@ -125,9 +128,11 @@ void MainWindow::listFiles(const QString& directory, QStringList& files)
 void MainWindow::done()
 {
     state = Done;
+    timer.stop();
     ui->leftImage->setVisible(false);
     ui->rightImage->setVisible(false);
     float result = (float(goodAnswers) * 100.0f) / float(maxQuestions);
+    float avgAnswerSpeed = (float(answersTime) * 1000.0f) / float(maxQuestions);
     ui->questionLabel->setText(
         QString("Your result is %1%. Your average answer speed is %2 ms.")
                 .arg(result)
@@ -156,6 +161,16 @@ void MainWindow::generateNextPair()
         ui->leftImage->setPicture(badFile);
         ui->rightImage->setPicture(goodFile);
     }
+
+    uint64_t t = uint64_t(std::time(NULL));
+    answersTime += (t - lastTime);
+    lastTime = t;
+
+    if (state != Done)
+    {
+        timer.stop();
+        timer.start();
+    }
 }
 
 const QString& MainWindow::pickRandom(const QStringList& list, QIntSet& outSet)
@@ -173,8 +188,9 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
     if (state == None)
     {
         state = InProgress;
+        lastTime = uint64_t(std::time(NULL));
         generateNextPair();
-        timer.start();
+        //timer.start();
         return;
     }
 
@@ -186,16 +202,16 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
     case Qt::Key_Left:
         if (leftIsGood)
             goodAnswers++;
-        generateNextPair();
         break;
     case Qt::Key_Right:
         if (!leftIsGood)
             goodAnswers++;
-        generateNextPair();
         break;
     default:
         break;
     }
+
+    generateNextPair();
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
