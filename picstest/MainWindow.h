@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QCloseEvent>
 #include <QMap>
+#include <QTimer>
 
 namespace Ui {
 class MainWindow;
@@ -13,19 +14,29 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
+    typedef QMap<QString, QString> TypesMap;
+    enum State {
+        None,
+        InProgress,
+        Done,
+    } state;
+
     Ui::MainWindow *ui;
     QString questionText;
-    QMap<QString, QString> imageTypes;
+    TypesMap imageTypes;
     int timeToChoose;
     int maxQuestions;
+    QSize imageSize;
+    QTimer timer;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
 protected:
-    void paintEvent(QPaintEvent* event);
+    //void paintEvent(QPaintEvent* event);
     void closeEvent(QCloseEvent* event);
+    void keyReleaseEvent(QKeyEvent *event);
 
 private:
     void loadSettings(const QString& path);

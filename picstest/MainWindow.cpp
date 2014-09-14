@@ -9,7 +9,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     timeToChoose(0),
-    maxQuestions(0)
+    maxQuestions(0),
+    state(None)
 {
     ui->setupUi(this);
 
@@ -23,10 +24,10 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::paintEvent(QPaintEvent* event)
+/*void MainWindow::paintEvent(QPaintEvent* event)
 {
     //QPainter painter(this);
-}
+}*/
 
 void MainWindow::loadSettings(const QString& path)
 {
@@ -78,15 +79,54 @@ void MainWindow::loadSettings(const QString& path)
         }
         else if (n.nodeName() == "time_to_choose")
             timeToChoose = e.attribute("time").toInt();
-        else if (n.nodeName() == "max_questions");
+        else if (n.nodeName() == "max_questions")
             maxQuestions = e.attribute("number").toInt();
+        else if (n.nodeName() == "image_size")
+            imageSize = QSize(e.attribute("width").toInt(), e.attribute("height").toInt());
         n = n.nextSibling();
     }
 }
 
 void MainWindow::generateQuestion()
 {
-    ui->questionLabel->setText(questionText);
+    qsrand(QTime::currentTime().msec());
+
+    int goodRand = qrand() % imageTypes.size();
+    TypesMap::iterator goodIterator = imageTypes.begin();
+    for (int i = 0; i < goodRand; ++i)
+        goodIterator++;
+
+    int badRand;
+    do {
+        badRand = qrand() % imageTypes.size();
+    } while (badRand != goodRand);
+    TypesMap::iterator badIterator = imageTypes.begin();
+    for (int i = 0; i < badRand; ++i)
+        badIterator++;
+
+    ui->questionLabel->setText(questionText.arg(goodIterator.value()));
+
+    timer.setInterval(timeToChoose);
+}
+
+void MainWindow::keyReleaseEvent(QKeyEvent *event)
+{
+    if (state == None)
+    {
+        state = InProgress;
+        timer.start();
+        return;
+    }
+
+    switch (event->key())
+    {
+    case Qt::Key_Left:
+        break;
+    case Qt::Key_Right:
+        break;
+    default:
+        break;
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-    <question text="Choose %s" />
+    <question text="Choose %1" />
     <image_types>
         <type text="Text Editor" directory="editors" />
         <type text="OS Distro" directory="distros" />
     </image_types>
     <time_to_choose time="3000" />
     <max_questions number="3" />
+    <image_size width="8" height="10" />
 </root>
