@@ -6,6 +6,6 @@
         <type text="OS Distro" directory="distros" />
     </image_types>
     <time_to_choose time="3000" />
-    <max_questions number="3" />
-    <image_size width="8" height="10" />
+    <max_questions number="2" />
+    <image_size width="5" height="6" />
 </root>
