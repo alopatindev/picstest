@@ -44,14 +44,14 @@ void MainWindow::loadSettings(const QString& path)
     if (!f.exists())
     {
         QMessageBox::critical(this, "", "Cannot find " + path);
-        emit close();
+        close();
         return;
     }
 
     if (!f.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         QMessageBox::critical(this, "", "Cannot read " + path);
-        emit close();
+        close();
         return;
     }
 
