@@ -51,14 +51,14 @@ public slots:
 
 protected:
     void closeEvent(QCloseEvent* event);
-    void keyReleaseEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent* event);
 
 private:
     void loadSettings(const QString& path);
     void generateQuestion();
     void listFiles(const QString& directory, QStringList& files);
     const QString& pickRandom(const QStringList& list, QIntSet& outSet);
-    void done();
+    void setState(State state);
 };
 
 #endif // MAINWINDOW_H

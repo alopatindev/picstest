@@ -125,18 +125,35 @@ void MainWindow::listFiles(const QString& directory, QStringList& files)
         files.append(list[i].absoluteFilePath());
 }
 
-void MainWindow::done()
+void MainWindow::setState(State state)
 {
-    state = Done;
-    timer.stop();
-    ui->leftImage->setVisible(false);
-    ui->rightImage->setVisible(false);
-    float result = (float(goodAnswers) * 100.0f) / float(maxQuestions);
-    float avgAnswerSpeed = (float(answersTime) * 1000.0f) / float(maxQuestions);
-    ui->questionLabel->setText(
+    this->state = state;
+
+    switch(state)
+    {
+    case None:
+        break;
+    case InProgress:
+        lastTime = uint64_t(std::time(NULL));
+        generateNextPair();
+        //timer.start();
+        break;
+    case Done:
+    {
+        timer.stop();
+        ui->leftImage->setVisible(false);
+        ui->rightImage->setVisible(false);
+        float result = (float(goodAnswers) * 100.0f) / float(maxQuestions);
+        float avgAnswerSpeed = (float(answersTime) * 1000.0f) / float(maxQuestions);
+        ui->questionLabel->setText(
         QString("Your result is %1%. Your average answer speed is %2 ms.")
-                .arg(result)
-                .arg(avgAnswerSpeed));
+            .arg(result)
+            .arg(avgAnswerSpeed));
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 void MainWindow::generateNextPair()
@@ -144,7 +161,7 @@ void MainWindow::generateNextPair()
     ++question;
     if (question > maxQuestions)
     {
-        done();
+        setState(Done);
         return;
     }
 
@@ -187,10 +204,7 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
 {
     if (state == None)
     {
-        state = InProgress;
-        lastTime = uint64_t(std::time(NULL));
-        generateNextPair();
-        //timer.start();
+        setState(InProgress);
         return;
     }
 
