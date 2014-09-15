@@ -4,7 +4,6 @@
 #include <QFile>
 #include <QtXml>
 #include <QMessageBox>
-#include <ctime>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -27,6 +26,16 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+const uint64_t MainWindow::timestampMs()
+{
+    QTime ct = QTime::currentTime();
+    uint64_t result = uint64_t(ct.hour())   * 60ULL * 60ULL * 1000ULL +
+                      uint64_t(ct.minute()) * 60ULL * 1000ULL +
+                      uint64_t(ct.second()) * 1000ULL +
+                      uint64_t(ct.msec());
+    return result;
 }
 
 void MainWindow::loadSettings(const QString& path)
@@ -89,8 +98,7 @@ void MainWindow::loadSettings(const QString& path)
 
 void MainWindow::generateQuestion()
 {
-    //qsrand(QTime::currentTime().msec());
-    qsrand(uint(std::time(NULL)));
+    qsrand(uint(timestampMs() / 1000ULL));
 
     int goodRand = qrand() % imageTypes.size();
     TypesMap::iterator goodIterator = imageTypes.begin();
@@ -113,6 +121,7 @@ void MainWindow::generateQuestion()
     listFiles(resourcesDir + badIterator.key(), badFiles);
 
     timer.setInterval(timeToChoose);
+    connect(&timer, SIGNAL(timeout()), SLOT(incrementAnswersTime()));
     connect(&timer, SIGNAL(timeout()), SLOT(generateNextPair()));
 }
 
@@ -134,17 +143,18 @@ void MainWindow::setState(State state)
     case None:
         break;
     case InProgress:
-        lastTime = uint64_t(std::time(NULL));
+    {
         generateNextPair();
-        //timer.start();
+        lastTime = timestampMs();
         break;
+    }
     case Done:
     {
         timer.stop();
         ui->leftImage->setVisible(false);
         ui->rightImage->setVisible(false);
         float result = (float(goodAnswers) * 100.0f) / float(maxQuestions);
-        float avgAnswerSpeed = (float(answersTime) * 1000.0f) / float(maxQuestions);
+        float avgAnswerSpeed = float(answersTime) / float(maxQuestions);
         ui->questionLabel->setText(
         QString("Your result is %1%. Your average answer speed is %2 ms.")
             .arg(result)
@@ -179,15 +189,19 @@ void MainWindow::generateNextPair()
         ui->rightImage->setPicture(goodFile);
     }
 
-    uint64_t t = uint64_t(std::time(NULL));
-    answersTime += (t - lastTime);
-    lastTime = t;
-
     if (state != Done)
     {
         timer.stop();
         timer.start();
     }
+}
+
+void MainWindow::incrementAnswersTime()
+{
+    uint64_t t = timestampMs();
+    answersTime += int(t - lastTime);
+    lastTime = t;
+    qDebug() << "incerement lastTime=" << lastTime << " answersTime=" << answersTime;
 }
 
 const QString& MainWindow::pickRandom(const QStringList& list, QIntSet& outSet)
@@ -225,6 +239,7 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
         break;
     }
 
+    incrementAnswersTime();
     generateNextPair();
 }
 

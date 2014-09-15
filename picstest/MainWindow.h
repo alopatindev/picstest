@@ -45,9 +45,11 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    static const uint64_t timestampMs();
 
 public slots:
     void generateNextPair();
+    void incrementAnswersTime();
 
 protected:
     void closeEvent(QCloseEvent* event);
