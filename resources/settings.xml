@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-    <question text="Choose %1" />
+    <texts question="Choose %1"
+           result="Your result is %1%. Your average answer speed is %2 ms." />
     <image_types>
         <type text="Text Editor" directory="editors" />
         <type text="OS Distro" directory="distros" />

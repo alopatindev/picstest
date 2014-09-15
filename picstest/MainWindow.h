@@ -27,6 +27,7 @@ class MainWindow : public QMainWindow
     Ui::MainWindow *ui;
     QString resourcesDir;
     QString questionText;
+    QString resultText;
     TypesMap imageTypes;
     int timeToChoose;
     int maxQuestions;

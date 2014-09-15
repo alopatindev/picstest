@@ -18,7 +18,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    resourcesDir = "../resources/";
+    resourcesDir = "resources/";
+    if (!QDir(resourcesDir).exists())
+        resourcesDir = "../resources/";
+
     loadSettings(resourcesDir + "settings.xml");
     generateQuestion();
 }
@@ -74,8 +77,11 @@ void MainWindow::loadSettings(const QString& path)
     while(!n.isNull())
     {
         QDomElement e = n.toElement();
-        if (n.nodeName() == "question")
-            questionText = e.attribute("text");
+        if (n.nodeName() == "texts")
+        {
+            questionText = e.attribute("question");
+            resultText = e.attribute("result");
+        }
         else if (n.nodeName() == "image_types")
         {
             QDomNode nn = n.firstChild();
@@ -156,9 +162,7 @@ void MainWindow::setState(State state)
         float result = (float(goodAnswers) * 100.0f) / float(maxQuestions);
         float avgAnswerSpeed = float(answersTime) / float(maxQuestions);
         ui->questionLabel->setText(
-        QString("Your result is %1%. Your average answer speed is %2 ms.")
-            .arg(result)
-            .arg(avgAnswerSpeed));
+        QString(resultText).arg(result).arg(avgAnswerSpeed));
         break;
     }
     default:
@@ -201,7 +205,7 @@ void MainWindow::incrementAnswersTime()
     uint64_t t = timestampMs();
     answersTime += int(t - lastTime);
     lastTime = t;
-    qDebug() << "incerement lastTime=" << lastTime << " answersTime=" << answersTime;
+    //qDebug() << "incerement lastTime=" << lastTime << " answersTime=" << answersTime;
 }
 
 const QString& MainWindow::pickRandom(const QStringList& list, QIntSet& outSet)
