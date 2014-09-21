@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QtXml>
 #include <QMessageBox>
+#include <cstdlib>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -31,13 +32,13 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-const uint64_t MainWindow::timestampMs()
+const quint64 MainWindow::timestampMs()
 {
     QTime ct = QTime::currentTime();
-    uint64_t result = uint64_t(ct.hour())   * 60ULL * 60ULL * 1000ULL +
-                      uint64_t(ct.minute()) * 60ULL * 1000ULL +
-                      uint64_t(ct.second()) * 1000ULL +
-                      uint64_t(ct.msec());
+    quint64 result = quint64(ct.hour())   * 60ULL * 60ULL * 1000ULL +
+                     quint64(ct.minute()) * 60ULL * 1000ULL +
+                     quint64(ct.second()) * 1000ULL +
+                     quint64(ct.msec());
     return result;
 }
 
@@ -202,7 +203,7 @@ void MainWindow::generateNextPair()
 
 void MainWindow::incrementAnswersTime()
 {
-    uint64_t t = timestampMs();
+    quint64 t = timestampMs();
     answersTime += int(t - lastTime);
     lastTime = t;
     //qDebug() << "incerement lastTime=" << lastTime << " answersTime=" << answersTime;
@@ -250,4 +251,6 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
 void MainWindow::closeEvent(QCloseEvent* event)
 {
     event->accept();
+    QApplication::quit();
+    std::exit(0);
 }

@@ -40,13 +40,13 @@ class MainWindow : public QMainWindow
     int question;
     bool leftIsGood;
     int goodAnswers;
-    uint64_t lastTime;
+    quint64 lastTime;
     int answersTime;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    static const uint64_t timestampMs();
+    static const quint64 timestampMs();
 
 public slots:
     void generateNextPair();
